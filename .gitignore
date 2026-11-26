@@ -1,1 +1,7 @@
-node_modules\n.next\ndist\n.wrangler\n.env*\n!.env.example\n.DS_Store\n
+node_modules
+.next
+dist
+.wrangler
+.env*
+!.env.example
+.DS_Store
