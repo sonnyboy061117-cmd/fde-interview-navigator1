@@ -1,0 +1,1 @@
+node_modules\n.next\ndist\n.wrangler\n.env*\n!.env.example\n.DS_Store\n
