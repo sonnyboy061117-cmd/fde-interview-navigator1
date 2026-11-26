@@ -62,7 +62,7 @@ pnpm build
 
 - 需求追踪：[Issue #1](https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/issues/1)
 - 实现通过独立分支与 Pull Request 提交
-- 在线地址会在部署完成后补入此处
+- 在线演示：https://calder-claim-material-checker.ochrelynx7.chatgpt.site（当前为所有者私有访问）
 
 ## 数据与版权说明
 
