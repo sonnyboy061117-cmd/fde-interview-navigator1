@@ -29,6 +29,12 @@
   .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
   .chip{font-size:12px;padding:4px 11px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
   .chip.hl{background:var(--accent-soft);border-color:#c9e0d5;color:var(--accent)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 15px;border-radius:10px;
+       text-decoration:none;font-size:13px;font-weight:650;border:1px solid var(--line);
+       background:var(--panel);color:var(--ink);transition:.18s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(31,35,32,.08)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 
   .quote{
     background:var(--accent-soft);border-left:3px solid var(--accent);
@@ -84,6 +90,15 @@
   .rule h4{margin:0 0 6px;font-size:15px}
   .rule p{margin:0;font-size:13.5px;color:var(--muted)}
 
+  .deliverables{margin-top:56px}
+  .deliverable-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .deliverable{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+               padding:16px;text-decoration:none;color:var(--ink);transition:.18s}
+  .deliverable:hover{transform:translateY(-2px);border-color:#b9d5c8;box-shadow:0 6px 20px rgba(31,35,32,.06)}
+  .deliverable b{display:block;font-size:14px;margin-bottom:5px}
+  .deliverable small{color:var(--muted);line-height:1.5}
+  .deliverable .status{display:inline-block;margin-top:10px;padding:2px 7px;border-radius:999px;
+                       background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:700}
   footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
   footer a{color:var(--accent);text-decoration:none}
 </style>
@@ -100,6 +115,11 @@
       <span class="chip">6 个角色</span>
       <span class="chip">4 个阶段关卡</span>
       <span class="chip">训练环境 · 合成案例</span>
+    </div>
+    <div class="actions">
+      <a class="btn primary" href="https://calder-claim-material-checker.ochrelynx7.chatgpt.site/" target="_blank" rel="noopener">立即体验材料核对 Demo ↗</a>
+      <a class="btn" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/docs/卡尔德保险-九阶段实训报告.md">查看九阶段报告</a>
+      <a class="btn" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1">查看完整仓库</a>
     </div>
   </header>
 
@@ -224,9 +244,34 @@
     </div>
   </div>
 
+  <section class="deliverables">
+    <h2>项目交付与验收入口</h2>
+    <div class="deliverable-grid">
+      <a class="deliverable" href="https://calder-claim-material-checker.ochrelynx7.chatgpt.site/" target="_blank" rel="noopener">
+        <b>交互 Demo</b><small>单笔报案材料状态核对，突出缺件、冲突与人工确认。</small><span class="status">已公开上线</span>
+      </a>
+      <a class="deliverable" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/docs/卡尔德保险-九阶段实训报告.md">
+        <b>九阶段实训报告</b><small>从业务挖掘、现场调研到上线运营的完整过程。</small><span class="status">已归档</span>
+      </a>
+      <a class="deliverable" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/prompts/卡尔德保险项目主提示词.md">
+        <b>项目主提示词</b><small>技术约束、数据红线、代码规范与交付要求。</small><span class="status">已归档</span>
+      </a>
+      <a class="deliverable" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/ai-collaboration/AI协作记录.md">
+        <b>AI 协作记录</b><small>保留关键需求、判断、修改和交付过程，敏感凭据已删除。</small><span class="status">已脱敏</span>
+      </a>
+      <a class="deliverable" href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/docs/项目验收清单.md">
+        <b>项目验收清单</b><small>用一页确认站点、文档、提示词、证据与安全边界。</small><span class="status">快速检查</span>
+      </a>
+      <a class="deliverable" href="https://github.com/gaojiayi0625/fengya-api-relay/pull/2">
+        <b>外部协作证明</b><small>包含公开 Issue 与 Pull Request，仓库内附完整截图。</small><span class="status">可核验</span>
+      </a>
+    </div>
+  </section>
+
   <footer>
     FDE 九阶段全流程实训 · 卡尔德保险合成案例 · 2026 年 11 月<br>
-    完整报告见 <a href="../docs/卡尔德保险-九阶段实训报告.md">docs/卡尔德保险-九阶段实训报告.md</a>　·　课件原文见 <a href="../assets/FDE九阶段流程课件.html">assets/FDE九阶段流程课件.html</a><br>
+    完整报告见 <a href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/docs/卡尔德保险-九阶段实训报告.md">九阶段实训报告</a>　·　
+    课件存档见 <a href="https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/blob/main/assets/FDE九阶段流程课件.html">FDE 九阶段流程课件</a><br>
     角色与数据均为训练用合成内容，不含任何真实客户信息。
   </footer>
 
