@@ -10,6 +10,19 @@
 - [九阶段项目速查页](https://sonnyboy061117-cmd.github.io/fde-interview-navigator1/)
 - [卡尔德保险报案材料核对 Demo](https://calder-claim-material-checker.ochrelynx7.chatgpt.site/)
 - [GitHub 仓库](https://github.com/sonnyboy061117-cmd/fde-interview-navigator1)
+- [项目验收清单](docs/项目验收清单.md)
+
+## 快速验收
+
+建议按下面顺序查看：
+
+1. 打开九阶段项目速查页，了解问题、方案和九阶段闭环。
+2. 打开卡尔德保险 Demo，体验材料已有、缺失、冲突与人工确认状态。
+3. 阅读九阶段实训报告，核对业务证据、需求边界和测试方案。
+4. 查看项目主提示词与 AI 协作记录，核对开发约束和修改过程。
+5. 核验外部 Issue、PR 及仓库内截图证据。
+
+当前状态：**公开仓库、公开站点、公开 Demo、完整资料归档、外部贡献可核验。**
 
 ## 目录结构
 
@@ -22,6 +35,7 @@
 │   └── index.html                          # 九阶段速查页原始文件
 ├── docs/
 │   ├── 卡尔德保险-九阶段实训报告.md          # 九阶段报告正文
+│   ├── 项目验收清单.md                       # 老师快速验收入口
 │   └── evidence/
 │       ├── external-issue-1.png            # 外部 Issue 截图
 │       └── external-pr-2.png               # 外部 PR 截图
