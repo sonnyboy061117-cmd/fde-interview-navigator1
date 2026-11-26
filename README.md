@@ -1,5 +1,69 @@
-# Calder Claim Material Checker
+# 卡尔德保险 · 单笔报案材料核对 Demo
 
-卡尔德保险单笔报案材料核对 Demo。
+一个从 FDE 九阶段案例中收敛出来的最小产品切片：**只核对一笔首次报案的材料状态**。
 
-> 当前仓库正在通过 Issue 与 Pull Request 完成首个可运行版本。所有数据均为合成训练数据。
+它把案件系统、影像系统和沟通记录中的模拟信息整理成一份只读清单，展示：
+
+- 哪些材料已收到
+- 哪些材料缺失
+- 哪些来源存在冲突、必须人工确认
+- 每项结论来自哪里、依据哪条规则
+- 系统明确不做哪些决定
+
+> 所有人物、案件号、保单号和材料均为合成训练数据，不含真实客户信息。本 Demo 不构成核赔、赔付或客户沟通建议。
+
+## 为什么把切口缩小
+
+原案例覆盖完整九阶段与 27 项任务，更适合作为方法论报告。本仓库把产品边界缩小到“单笔报案材料核对”，确保演示者能在 3 分钟内讲清问题、操作、价值和风险边界。
+
+## Demo 能做什么
+
+1. 切换三笔模拟案件：缺件、齐备、来源冲突。
+2. 按“已收到 / 缺失 / 需人工确认”筛选。
+3. 点击材料查看来源、证据、规则版本和处理说明。
+4. 对冲突项明确转人工，不自动选边。
+
+## 明确不做
+
+- 不自动核赔
+- 不计算或建议赔付
+- 不自动联系客户
+- 不写入生产系统
+- 不使用真实个人信息
+- 不把模型输出当作最终事实
+
+## 仓库资料
+
+- [产品范围与设计](docs/PRODUCT.md)
+- [AI 协作记录](docs/ai/AI_COLLABORATION.md)
+- [用户提示词与脱敏日志](docs/ai/PROMPT_LOG.md)
+- [未来 AI 能力提示词草案](docs/ai/PROMPTS.md)
+- [测试说明](docs/TESTING.md)
+- [来源材料清单](docs/SOURCES.md)
+- [完整 FDE 九阶段案例报告](docs/reference/卡尔德保险-九阶段实训报告.md)
+- [原九阶段速查页](archive/fde-nine-stage-overview.html)
+
+## 本地运行
+
+需要 Node.js 22.13+ 与 pnpm。
+
+```bash
+pnpm install
+pnpm dev
+```
+
+打开终端给出的本地地址。生产构建：
+
+```bash
+pnpm build
+```
+
+## 项目过程
+
+- 需求追踪：[Issue #1](https://github.com/sonnyboy061117-cmd/fde-interview-navigator1/issues/1)
+- 实现通过独立分支与 Pull Request 提交
+- 在线演示：https://calder-claim-material-checker.ochrelynx7.chatgpt.site（当前为所有者私有访问）
+
+## 数据与版权说明
+
+案例数据为合成训练数据。课程课件原文未上传到公开仓库；原因及文件校验信息见 [来源材料清单](docs/SOURCES.md)。
