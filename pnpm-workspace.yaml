@@ -1,1 +1,1 @@
-onlyBuiltDependencies:\n  - esbuild\n  - sharp\n  - workerd\n
+allowBuilds:\n  esbuild: true\n  sharp: true\n  workerd: true\n
