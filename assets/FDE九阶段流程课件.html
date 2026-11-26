@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDE 九阶段全流程课件 · 虚拟实验室与访谈使用地图</title>
+<style>
+  :root{
+    --blue-900:#0b2a4a; --blue-700:#12467d; --blue-600:#1a5fa8; --blue-500:#2478d7;
+    --blue-100:#e3eefb; --blue-50:#f2f7fd;
+    --ink:#1c2b3a; --ink-2:#44586d; --ink-3:#6b7d90;
+    --line:#d8e4f0; --bg:#f6f9fc; --card:#ffffff;
+    --green:#1d7a4f; --amber:#a4650a; --amber-bg:#fdf3e3;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px;}
+
+  /* 封面 */
+  header.hero{background:linear-gradient(135deg,var(--blue-900) 0%,var(--blue-700) 55%,var(--blue-600) 100%);color:#fff;padding:56px 24px 64px;}
+  .hero-inner{max-width:1080px;margin:0 auto;}
+  .hero .tag{display:inline-block;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:4px 14px;font-size:13px;letter-spacing:2px;margin-bottom:18px;}
+  .hero h1{font-size:32px;font-weight:700;letter-spacing:1px;}
+  .hero p{margin-top:12px;max-width:740px;color:rgba(255,255,255,.85);font-size:15px;}
+  .hero .meta{margin-top:20px;font-size:13px;color:rgba(255,255,255,.65);}
+
+  /* 总览导航 */
+  .overview{margin-top:-32px;position:relative;z-index:2;}
+  .overview-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(12,42,74,.08);}
+  .ov-item{display:block;text-align:center;text-decoration:none;border-radius:10px;padding:10px 4px;transition:background .15s;}
+  .ov-item:hover{background:var(--blue-50);}
+  .ov-num{font-size:11px;color:var(--blue-500);font-weight:700;letter-spacing:1px;}
+  .ov-name{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-top:2px;}
+  .ov-tasks{display:block;font-size:11px;color:var(--ink-3);margin-top:2px;}
+  .ov-lab{display:block;font-size:10px;margin-top:3px;color:#1a5fa8;font-weight:700;}
+  .ov-lab.mute{color:#c2ccd6;font-weight:400;}
+  .ov-item.p1 .ov-num{color:#1d7a4f;} .ov-item.p2 .ov-num{color:#a4650a;}
+  .ov-item.p3 .ov-num{color:#8a3ab5;} .ov-item.p4 .ov-num{color:#b03a2e;}
+
+  /* 说明条 */
+  .intro{margin-top:24px;background:var(--blue-50);border:1px solid var(--line);border-radius:12px;padding:18px 22px;font-size:14px;color:var(--ink-2);}
+  .intro b{color:var(--blue-700);}
+  .phase-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+
+  /* 标签体系 */
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap;line-height:1.6;}
+  .badge.lab{background:#e9f2ff;color:#14568f;border:1px solid #b6d3f2;}
+  .badge.talk{background:#fdf3e3;color:#8f5806;border:1px solid #eed4a6;}
+  .badge.desk{background:#f2f4f7;color:#6b7d90;border:1px solid #e2e7ec;}
+  .badge.ok{background:#e9f6ef;color:#166b45;border:1px solid #c4e5d4;}
+  .badge.opt{background:#f5f1fb;color:#6d3fa8;border:1px solid #ddd0f0;}
+
+  /* 使用地图 */
+  .maphd{margin-top:36px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .maphd h2{font-size:20px;}
+  .maphd span{font-size:13px;color:var(--ink-3);}
+  .maptable{width:100%;border-collapse:collapse;margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13.5px;}
+  .maptable thead th{background:var(--blue-700);color:#fff;font-size:13px;font-weight:700;padding:11px 12px;text-align:left;letter-spacing:.5px;}
+  .maptable td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:middle;}
+  .maptable tbody tr.stage-row td{background:var(--blue-50);font-weight:700;color:var(--blue-700);font-size:13px;letter-spacing:.5px;}
+  .maptable tbody tr:hover td{background:#fbfdff;}
+  .maptable td.tname{font-weight:600;}
+  .maptable td.tname small{display:block;font-weight:400;color:var(--ink-3);font-size:12px;}
+  .legendbar{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:13px;color:var(--ink-2);}
+  .scrollx{overflow-x:auto;margin-top:14px;border-radius:12px;border:1px solid var(--line);}
+  .scrollx .maptable{margin-top:0;border:0;border-radius:0;min-width:880px;}
+  .whogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+  .whocard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue-500);border-radius:10px;padding:12px 16px;font-size:13.5px;}
+  .whocard b{display:block;color:var(--blue-700);font-size:14px;margin-bottom:4px;}
+  .whocard span{color:var(--ink-2);}
+  .whocard em{color:var(--ink-3);font-style:normal;font-size:12px;display:block;margin-top:4px;}
+  .qbankgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+  .qcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue-500);border-radius:12px;padding:14px 18px;}
+  .qcard h3{font-size:15px;color:var(--blue-700);margin-bottom:2px;}
+  .qcard .sub{font-size:12px;color:var(--ink-3);margin-bottom:8px;}
+  .qcard ol{margin-left:18px;font-size:13.5px;color:var(--ink-2);line-height:1.9;}
+  .qcard ol li::marker{color:var(--blue-500);font-weight:700;}
+  .qcard.good{border-left-color:#1d7a4f;}
+  .qcard.good h3{color:#166b45;}
+  .qcard.bad{border-left-color:#b03a2e;background:#fffafa;}
+  .qcard.bad h3{color:#8e2f25;}
+  .qcard.bad li::marker{color:#c06156;}
+  .qcard .why{display:block;font-size:12.5px;color:#8e2f25;margin-top:2px;}
+  .qcard.wide{grid-column:1 / -1;}
+
+  /* 阶段区块 */
+  section.stage{margin-top:44px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(12,42,74,.05);}
+  .stage-head{display:flex;align-items:flex-start;gap:18px;padding:24px 28px 18px;border-left:6px solid var(--blue-600);}
+  .stage-head.green{border-left-color:#1d7a4f;} .stage-head.amber{border-left-color:#a4650a;}
+  .stage-head.purple{border-left-color:#8a3ab5;} .stage-head.red{border-left-color:#b03a2e;}
+  .stage-no{font-size:13px;font-weight:800;color:var(--blue-500);letter-spacing:2px;white-space:nowrap;padding-top:4px;}
+  .stage-head.green .stage-no{color:#1d7a4f;} .stage-head.amber .stage-no{color:#a4650a;}
+  .stage-head.purple .stage-no{color:#8a3ab5;} .stage-head.red .stage-no{color:#b03a2e;}
+  .stage-title{font-size:22px;font-weight:700;}
+  .stage-goal{font-size:14px;color:var(--ink-2);margin-top:4px;}
+  .stage-goal b{color:var(--ink);}
+  .stage-flag{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+  .stage-body{padding:0 28px 26px;}
+  .task{border:1px solid var(--line);border-radius:12px;margin-top:14px;overflow:hidden;}
+  .task.lab-on{border-color:#b6d3f2;box-shadow:0 0 0 3px rgba(36,120,215,.05);}
+  .task-head{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--blue-50);flex-wrap:wrap;}
+  .task.lab-on .task-head{background:#eef5fe;}
+  .task-idx{width:26px;height:26px;border-radius:50%;background:var(--blue-600);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .task-name{font-size:15px;font-weight:700;}
+  .task-head .badges{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+  .task-body{padding:14px 18px 16px;font-size:14px;}
+  .task-body .row{display:flex;gap:10px;margin-bottom:8px;}
+  .task-body .row:last-child{margin-bottom:0;}
+  .lbl{flex-shrink:0;width:64px;font-size:12px;font-weight:700;color:var(--blue-700);background:var(--blue-100);border-radius:6px;text-align:center;padding:2px 0;height:fit-content;margin-top:2px;}
+  .lbl.o{color:var(--green);background:#e5f4ec;}
+  .lbl.q{color:var(--amber);background:var(--amber-bg);}
+  .lbl.h{color:#14568f;background:#e9f2ff;}
+  .task-body .txt{color:var(--ink-2);}
+  .task-body .txt b{color:var(--ink);}
+  .ask{font-style:normal;color:var(--amber);background:var(--amber-bg);border-radius:8px;padding:2px 8px;}
+
+  .gate{margin-top:16px;border:1px dashed var(--blue-500);background:var(--blue-50);border-radius:10px;padding:12px 18px;font-size:14px;color:var(--ink-2);}
+  .gate b{color:var(--blue-700);}
+
+  /* 操作路径 */
+  .howto{margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;}
+  .howto h2{font-size:18px;margin-bottom:10px;}
+  .howto ol{margin-left:20px;font-size:14px;color:var(--ink-2);}
+  .howto ol li{margin-bottom:6px;}
+  .howto code{background:var(--blue-50);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:var(--blue-700);}
+  .howto .warn{margin-top:12px;font-size:13px;color:#8f5806;background:var(--amber-bg);border-radius:8px;padding:10px 14px;}
+
+  footer{margin-top:56px;text-align:center;font-size:13px;color:var(--ink-3);}
+  footer .note{background:var(--card);border:1px solid var(--line);border-radius:10px;display:inline-block;padding:12px 24px;text-align:left;}
+
+  @media (max-width:900px){
+    .overview-grid{grid-template-columns:repeat(3,1fr);}
+    .stage-head{flex-direction:column;gap:6px;}
+    .maptable{font-size:12px;}
+  }
+  @media print{
+    body{background:#fff;}
+    .overview-grid{box-shadow:none;}
+    section.stage{break-inside:avoid;box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="tag">FDE 模拟训练中心 · 流程课件</span>
+    <h1>FDE 九阶段全流程：每一步在做什么，哪些步必须进虚拟实验室</h1>
+    <p>FDE（Forward Deployed Engineer，前置部署工程师）的核心工作方法：从一个模糊的业务痛点出发，经过九个阶段、27 项任务，把 AI 方案真正落到客户现场并持续运营。本版重点标清两件事——<b style="color:#fff">哪几步必须进虚拟实验室，哪几步必须做访谈</b>。</p>
+    <div class="meta">依据：《FDE 训练中心：业务流程与信息架构》（BUSINESS_FLOW.md）· 《FDE 成果收敛指南》（FDE_WORKFLOW_GUIDE.md）· lib/fde-flow.mjs 任务工具字段 · public/fde-flow.js 工具映射 · 2026-11</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 九阶段总览 -->
+  <nav class="overview">
+    <div class="overview-grid">
+      <a class="ov-item p1" href="#s1"><span class="ov-num">01</span><span class="ov-name">业务挖掘</span><span class="ov-tasks">3 项任务</span><span class="ov-lab">🧪 进实验室</span></a>
+      <a class="ov-item p1" href="#s2"><span class="ov-num">02</span><span class="ov-name">现场调研</span><span class="ov-tasks">3 项任务</span><span class="ov-lab">🧪 进实验室</span></a>
+      <a class="ov-item p1" href="#s3"><span class="ov-num">03</span><span class="ov-name">需求定义</span><span class="ov-tasks">3 项任务</span><span class="ov-lab mute">不上现场</span></a>
+      <a class="ov-item p2" href="#s4"><span class="ov-num">04</span><span class="ov-name">方案设计</span><span class="ov-tasks">3 项任务</span><span class="ov-lab mute">不上现场</span></a>
+      <a class="ov-item p3" href="#s5"><span class="ov-num">05</span><span class="ov-name">构建集成</span><span class="ov-tasks">3 项任务</span><span class="ov-lab mute">不上现场</span></a>
+      <a class="ov-item p3" href="#s6"><span class="ov-num">06</span><span class="ov-name">测试评估</span><span class="ov-tasks">3 项任务</span><span class="ov-lab mute">不上现场</span></a>
+      <a class="ov-item p3" href="#s7"><span class="ov-num">07</span><span class="ov-name">客户试点</span><span class="ov-tasks">3 项任务</span><span class="ov-lab">🎙 要访谈</span></a>
+      <a class="ov-item p4" href="#s8"><span class="ov-num">08</span><span class="ov-name">上线交接</span><span class="ov-tasks">3 项任务</span><span class="ov-lab">🎙 要访谈</span></a>
+      <a class="ov-item p4" href="#s9"><span class="ov-num">09</span><span class="ov-name">运营迭代</span><span class="ov-tasks">3 项任务</span><span class="ov-lab">🎙 要访谈</span></a>
+    </div>
+  </nav>
+
+  <div class="intro">
+    <b>先给结论：</b>整个九阶段里，<b>虚拟实验室只在阶段 01 业务挖掘、02 现场调研开放</b>（它是这两个阶段的阶段工作台，进阶段就摆在页面顶部）；<b>必须做访谈的共 7 项任务</b>——前 3 项是"调查型访谈"（01-2 核基线、01-3 问决策链、02-1 六角色访谈），后 4 项是"确认型访谈"（07-2 用户验收、08-1 三方评审、08-3 交接签收、09-2 事件演练）。每项<b>该找哪个角色、五个案例具体是谁</b>，见下面两张表。其余阶段都在线上工作台完成，不要跑去实验室找入口。
+    <div class="phase-legend">
+      <span><span class="dot" style="background:#1d7a4f"></span>第 1 周 · 认清问题（01–03）</span>
+      <span><span class="dot" style="background:#a4650a"></span>第 2 周 · 设计方案（04）</span>
+      <span><span class="dot" style="background:#8a3ab5"></span>第 3 周 · 构建、验证与试点（05–07）</span>
+      <span><span class="dot" style="background:#b03a2e"></span>第 4 周 · 交接与运营（08–09）</span>
+    </div>
+  </div>
+
+  <!-- 使用地图 -->
+  <div class="maphd">
+    <h2>虚拟实验室 / 访谈 使用地图（27 项任务全表）</h2>
+    <span>对着这张表准备现场，不会走错地方</span>
+  </div>
+  <div class="legendbar">
+    <span><span class="badge lab">🧪 必进虚拟实验室</span> 需要进 3D 业务现场，看角色、访谈、生成报告</span>
+    <span><span class="badge talk">🎙 必做访谈</span> 必须与角色/客户对话，不能只查资料</span>
+    <span><span class="badge opt">🟣 建议访谈</span> 有分歧或需确认时才谈</span>
+    <span><span class="badge desk">💻 线上完成</span> 用白板/台账/原型等界面，不用上现场</span>
+  </div>
+
+  <table class="maptable">
+    <thead>
+      <tr>
+        <th style="width:34%">阶段 · 任务</th>
+        <th style="width:24%">虚拟实验室</th>
+        <th style="width:20%">访谈</th>
+        <th style="width:22%">实际在哪做</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="stage-row"><td colspan="4">01 业务挖掘 · 阶段工作台：业务挖掘实验室</td></tr>
+      <tr><td class="tname">1 识别业务机会</td><td><span class="badge lab">🧪 必进</span></td><td><span class="badge desk">不需访谈</span></td><td>实验室六人公开问题 + 客户简报</td></tr>
+      <tr><td class="tname">2 建立现状基线</td><td><span class="badge lab">🧪 必进</span></td><td><span class="badge talk">🎙 必做</span> 向一线核口径</td><td>实验室取样本 → 证据台账</td></tr>
+      <tr><td class="tname">3 确认立项与决策链</td><td><span class="badge lab">🧪 必进</span></td><td><span class="badge talk">🎙 必做</span> 问审批权/预算</td><td>角色访谈（决策者、风险角色）</td></tr>
+      <tr class="stage-row"><td colspan="4">02 现场调研 · 同一实验室，重心是逐个访谈</td></tr>
+      <tr><td class="tname">1 开展角色访谈</td><td><span class="badge lab">🧪 必进（核心）</span></td><td><span class="badge talk">🎙 必做</span> 六角色逐个谈</td><td>3D 业务现场 · 角色访谈</td></tr>
+      <tr><td class="tname">2 还原现状流程</td><td><span class="badge desk">不需重进</span></td><td><span class="badge desk">不需新访谈</span></td><td>三视角工作台（白板）</td></tr>
+      <tr><td class="tname">3 四来源收敛与材料核对</td><td><span class="badge lab">🧪 必进</span> 生成报告并交接</td><td><span class="badge opt">🟣 建议</span> 有矛盾再追问</td><td>实验室报告 → 证据与验收台账</td></tr>
+      <tr class="stage-row"><td colspan="4">03 需求定义 · 不再上现场，只引用已采集的证据编号</td></tr>
+      <tr><td class="tname">1 确定优先问题</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>阶段作品（优先级判断）</td></tr>
+      <tr><td class="tname">2 编写需求与边界</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>需求规格与追溯矩阵</td></tr>
+      <tr><td class="tname">3 约定验收标准</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 与业务确认阈值</td><td>验收清单</td></tr>
+      <tr class="stage-row"><td colspan="4">04 方案设计 · 纯桌面工作</td></tr>
+      <tr><td class="tname">1 选定最小试点</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>阶段作品 + 方案比较</td></tr>
+      <tr><td class="tname">2 设计数据和系统边界</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 权限须客户确认</td><td>三视角工作台 + 权限矩阵</td></tr>
+      <tr><td class="tname">3 报价与投入产出测算</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>项目 ROI 测算</td></tr>
+      <tr class="stage-row"><td colspan="4">05 构建集成 · 原型台，全部线上</td></tr>
+      <tr><td class="tname">1 落实数据与工具契约</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 缺数据要回现场索取</td><td>原型与评估 + 数据契约</td></tr>
+      <tr><td class="tname">2 实现业务闭环</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>原型代码与版本说明</td></tr>
+      <tr><td class="tname">3 实现异常与审计</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>异常与审计样例</td></tr>
+      <tr class="stage-row"><td colspan="4">06 测试评估 · 原型台 + 评审，全部线上</td></tr>
+      <tr><td class="tname">1 建立评估集合</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>评估集与需求覆盖表</td></tr>
+      <tr><td class="tname">2 执行测试与重复评估</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>指定代码快照运行</td></tr>
+      <tr><td class="tname">3 修复并回归确认</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 请业务角色评审输出</td><td>质量评审与复盘</td></tr>
+      <tr class="stage-row"><td colspan="4">07 客户试点 · 进入客户会议与验收</td></tr>
+      <tr><td class="tname">1 准备受控试点</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 确认试点用户与退出信号</td><td>试点执行计划</td></tr>
+      <tr><td class="tname">2 开展用户验收（UAT）</td><td><span class="badge desk">不需要</span></td><td><span class="badge talk">🎙 必做（核心）</span></td><td>客户会议与验收 · 真实使用者</td></tr>
+      <tr><td class="tname">3 核对价值与继续决定</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 与业务核归因</td><td>收益复核 + 决策纪要</td></tr>
+      <tr class="stage-row"><td colspan="4">08 上线交接 · 三方评审会 + 交接会</td></tr>
+      <tr><td class="tname">1 审查上线准备</td><td><span class="badge desk">不需要</span></td><td><span class="badge talk">🎙 必做</span> 业务/技术/风险三方</td><td>上线准备检查与三方评审</td></tr>
+      <tr><td class="tname">2 演练发布与回滚</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>发布计划 + 回滚演练</td></tr>
+      <tr><td class="tname">3 完成运维和用户交接</td><td><span class="badge desk">不需要</span></td><td><span class="badge talk">🎙 必做</span> 具名签收</td><td>客户会议 + 交接清单</td></tr>
+      <tr class="stage-row"><td colspan="4">09 运营迭代 · 线上运营 + 一次客户事件演练</td></tr>
+      <tr><td class="tname">1 建立持续运营节奏</td><td><span class="badge desk">不需要</span></td><td><span class="badge desk">不需访谈</span></td><td>30/60/90 天运营计划</td></tr>
+      <tr><td class="tname">2 演练事件与变更管理</td><td><span class="badge desk">不需要</span></td><td><span class="badge talk">🎙 必做</span> 客户现场事件演练</td><td>演练客户事件（client 通道）</td></tr>
+      <tr><td class="tname">3 复盘并启动下一轮发现</td><td><span class="badge desk">不需要</span></td><td><span class="badge opt">🟣 建议</span> 复盘会</td><td>质量评审与复盘</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 访谈对象 -->
+  <div class="maphd">
+    <h2>访谈到底跟谁谈：六类角色，各有各的用处</h2>
+    <span>别把"六个人都聊一遍"当成调研完成</span>
+  </div>
+  <div class="whogrid">
+    <div class="whocard"><b>① Buyer 业务决策者</b><span>总经理、CIO、运营负责人级别。回答：值不值得投、谁出钱、谁拍板、能不能继续。</span><em>用在 01-3 立项、07-3 继续决定</em></div>
+    <div class="whocard"><b>② Operator 一线执行者</b><span>经办人、分析师、销售、普通员工、巡检员。回答：最近一单实际怎么做、哪里等、哪里返工、哪里做错。</span><em>用在 01-2 基线、02-1 主力、07-2 验收</em></div>
+    <div class="whocard"><b>③ 技术/系统角色</b><span>信息化负责人、FDE 集成工程师、设备适配工程师。回答：数据在哪、接口能不能通、技术边界在哪。</span><em>用在 02-1、04-2 边界、08-3 交接</em></div>
+    <div class="whocard"><b>④ 风险/合规角色</b><span>合规负责人、安全与发布审核。回答：哪些不能说、不能自动发、不能写进生产系统。</span><em>用在 01-3 授权、08-1 三方评审</em></div>
+    <div class="whocard"><b>⑤ 下游接收者</b><span>客服、服务台、财务。回答：上游出错时你收到什么、怎么补救、谁被投诉。</span><em>用在 02-1 补异常路径、09-2 事件演练</em></div>
+    <div class="whocard"><b>⑥ 书面 Brief 持有人</b><span>通常是业务负责人或项目对接人。回答：正式范围、交付时间、排除项写在哪份文件、哪个版本有效。</span><em>用在 02-1 核对书面范围</em></div>
+  </div>
+
+  <div class="maphd" style="margin-top:30px">
+    <h2>按目的找对人：七个访谈场景 × 五个案例的具体人名</h2>
+    <span>集团项目按所选模块现场里的角色名录，规则相同</span>
+  </div>
+  <div class="scrollx">
+    <table class="maptable">
+      <thead>
+        <tr>
+          <th style="width:14%">访谈目的（对应任务）</th>
+          <th style="width:11%">找哪类角色</th>
+          <th style="width:17%">卡尔德保险</th>
+          <th style="width:17%">赫利克斯资本</th>
+          <th style="width:15%">华衡智造</th>
+          <th style="width:14%">青禾报销助手</th>
+          <th style="width:14%">鸿蒙设备告警</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tname">立项与决策链<small>01-3</small></td>
+          <td>Buyer + 风险</td>
+          <td>Greg Hadley（理赔运营负责人）· Marcus Hill（合规）</td>
+          <td>Sarah Mendez（首席投资官）· Mei（合规）</td>
+          <td>周明远（总经理）· 沈悦（信息化）</td>
+          <td>员工服务负责人（发起人）· 信息安全联络人</td>
+          <td>顾岚（园区运维负责人）· 许安（安全与发布审核）</td>
+        </tr>
+        <tr>
+          <td class="tname">基线口径<small>01-2</small></td>
+          <td>Operator 一线</td>
+          <td>一线理赔员（报案材料经办人）</td>
+          <td>Rachel Kim（资深 TMT 分析师）</td>
+          <td>陈思雨（销售总监）· 王建国（生产计划经理）</td>
+          <td>小林（普通员工）· 周敏（财务专员）</td>
+          <td>陈晨（现场巡检员）· 唐悦（服务台）</td>
+        </tr>
+        <tr>
+          <td class="tname">六角色全面调研<small>02-1（核心）</small></td>
+          <td>六个视角全谈</td>
+          <td>Greg Hadley、一线理赔员、Priya Shah（首次报案负责人）、Anil Gupta（CIO）、Marcus Hill、Tom Reilly（精算审计）</td>
+          <td>Sarah Mendez、Rachel Kim、David Park（研究负责人）、Aditya（技术）、Mei（合规）、Carmen（交易员）</td>
+          <td>周明远、陈思雨、王建国、沈悦、许文静（质量）、李佳宁（客服）</td>
+          <td>员工服务负责人、小林、乔姐（行政）、陈工（FDE）、信息安全联络人、周敏（财务）</td>
+          <td>顾岚、陈晨、邵宁（设备适配）、林越（应用集成）、许安、唐悦（服务台）</td>
+        </tr>
+        <tr>
+          <td class="tname">用户验收 UAT<small>07-2</small></td>
+          <td>真实一线使用者（不是领导）</td>
+          <td>一线理赔员</td>
+          <td>Rachel Kim</td>
+          <td>陈思雨 · 李佳宁</td>
+          <td>小林 · 乔姐</td>
+          <td>陈晨 · 唐悦</td>
+        </tr>
+        <tr>
+          <td class="tname">上线三方评审<small>08-1</small></td>
+          <td>业务 + 技术 + 风险各一位</td>
+          <td>Greg / Anil Gupta / Marcus Hill</td>
+          <td>Sarah / Aditya / Mei</td>
+          <td>周明远 / 沈悦 / 许文静</td>
+          <td>员工服务负责人 / 陈工 / 信息安全联络人</td>
+          <td>顾岚 / 林越 / 许安</td>
+        </tr>
+        <tr>
+          <td class="tname">交接签收<small>08-3</small></td>
+          <td>实际维护人 / 服务台</td>
+          <td>Anil Gupta（CIO）</td>
+          <td>Aditya（技术负责人）</td>
+          <td>沈悦（信息化）</td>
+          <td>陈工 + 信息安全联络人</td>
+          <td>林越 · 唐悦</td>
+        </tr>
+        <tr>
+          <td class="tname">事件演练<small>09-2</small></td>
+          <td>报障一线 + 服务台</td>
+          <td>一线理赔员</td>
+          <td>Rachel Kim</td>
+          <td>李佳宁（客户服务主管）</td>
+          <td>小林</td>
+          <td>唐悦（工单接收人）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:10px;font-size:13px;color:var(--ink-3)">※ 集团项目（上海外服 / 东浩兰生）没有固定六人，角色由所选模块决定：先在项目工作空间选定模块，再从该模块的 3D 现场按同样顺序谈——问题提出人 → 一线 → 业务负责人 → 技术 → 风险 → 下游。</p>
+
+  <!-- 问题库 -->
+  <div class="maphd">
+    <h2>问什么：七段提问结构 + 七个场景的具体问题</h2>
+    <span>照着念就能问，但顺序别乱</span>
+  </div>
+
+  <div class="qbankgrid">
+    <div class="qcard wide">
+      <h3>先记住这个顺序：每次访谈都按这七步走</h3>
+      <div class="sub">从"讲一件事"开始，到"还缺什么"结束；不要一上来问方案</div>
+      <ol>
+        <li><b>还原事件：</b>"请讲最近一次……从谁发起，到这件事结束，中间经过哪些人？"</li>
+        <li><b>定分工：</b>"这一单里你负责哪一步？做完交给谁？"</li>
+        <li><b>量时间：</b>"处理和等待各花多久？中间被打断过几次？"</li>
+        <li><b>找异常：</b>"哪一单出过错？错在哪、怎么发现的、后来怎么补的？"</li>
+        <li><b>要证据：</b>"哪份记录、截图或系统能证明刚才说的？我能看一下吗？"</li>
+        <li><b>探边界：</b>"这件事你能定吗？谁批？什么情况必须停下来？"</li>
+        <li><b>收口：</b>"还有谁我应该去问？你觉得我问漏了什么？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>① 核基线（01-2 · 问一线）</h3>
+      <div class="sub">目标：把"大概""经常"逼成具体数字</div>
+      <ol>
+        <li>"上一单从接手到交出去一共多久？其中等客户补材料占多久？"</li>
+        <li>"这单返工了几次？每次是因为缺什么？"</li>
+        <li>"你说的'一会儿'大概几分钟？能照系统时间给我两个时间点吗？"</li>
+        <li>"这个数字是您记的还是系统里的？那条记录我能看看吗？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>② 问决策链（01-3 · 问业务负责人 + 风险）</h3>
+      <div class="sub">目标：问出钱、问出权、问出红线</div>
+      <ol>
+        <li>"如果只批三个月试点，谁签字？预算从哪个口子出？"</li>
+        <li>"除了您，还有谁的意见必须过一遍？"</li>
+        <li>"哪些数据现在不能碰？碰了要谁批？"</li>
+        <li>"试点结果不好的话，谁有权叫停？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>③ 六角色访谈（02-1 · 按角色换问法）</h3>
+      <div class="sub">目标：六个视角各问到只有他知道的事</div>
+      <ol>
+        <li><b>一线：</b>"最近一单实际怎么做的？和制度写的不一样在哪？"</li>
+        <li><b>业务负责人：</b>"您想改善哪个结果？现在这个数是多少？"</li>
+        <li><b>技术：</b>"数据在哪几个系统？接口谁维护？能不能只读？"</li>
+        <li><b>风险：</b>"这个动作错了最坏会怎样？谁承担？"</li>
+        <li><b>下游：</b>"上游交给你的时候，最常缺什么？"</li>
+        <li><b>财务/审计：</b>"收益怎么算您才认？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>④ 矛盾点追问（02-3 · 只问对不上的地方）</h3>
+      <div class="sub">目标：不替任何一方改口，把分歧留在记录里</div>
+      <ol>
+        <li>"他说已经通知了，你说没收到——中间是哪个环节传的？"</li>
+        <li>"两个部门的数字口径不一样，哪个是考核用的？"</li>
+        <li>"这份文件是哪个版本？现在还有效吗？"</li>
+        <li>"按您说的，这一单应该两小时，但记录显示两天，差在哪？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>⑤ 用户验收（07-2 · 问真实使用者）</h3>
+      <div class="sub">目标：看他自己能不能做完，别替他点</div>
+      <ol>
+        <li>"不用我教，您能自己走完这一单吗？卡在哪一步？"</li>
+        <li>"这一步比原来快还是慢？慢多少？"</li>
+        <li>"这个结果您敢直接交给客户吗？不敢的话缺什么？"</li>
+        <li>"如果明天系统停了，您打算怎么办？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>⑥ 上线三方评审（08-1）</h3>
+      <div class="sub">目标：三方各自表态，不搞集体默认</div>
+      <ol>
+        <li><b>业务：</b>"这个结果达到你的验收标准了吗？差哪一条？"</li>
+        <li><b>技术：</b>"版本固定了吗？回滚真跑过没有？"</li>
+        <li><b>风险：</b>"还有哪条权限没闭环？能不能上线？"</li>
+        <li>"不同意的那位，具体反对哪一条？"</li>
+      </ol>
+    </div>
+
+    <div class="qcard">
+      <h3>⑦ 交接与事件（08-3 / 09-2）</h3>
+      <div class="sub">目标：确认对方真能接住，而不是签个字</div>
+      <ol>
+        <li>"下周我不在了，出故障你第一步做什么？"</li>
+        <li>"回滚包在哪？谁有权限发？"</li>
+        <li>"资料变更找谁批？改完怎么通知用户？"</li>
+        <li>"你什么时候发现不对的？当时看到什么？"</li>
+        <li>"上次改规则之后，有没有旧单据算错？"</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="maphd" style="margin-top:30px">
+    <h2>五个案例的专属问法：把数字问出来</h2>
+    <span>下面这些数字都来自案例资料，可以直接照着问</span>
+  </div>
+  <div class="scrollx">
+    <table class="maptable">
+      <thead>
+        <tr><th style="width:12%">案例</th><th style="width:44%">可以照着问的问题</th><th style="width:44%">这些问题在挖什么</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tname">卡尔德保险</td>
+          <td>"客户补过一次材料，为什么还在追问？那次补给了谁？"<br>"补充说明和最初附件存在两个地方吗？怎么确认是同一单？"<br>"您说的处理时长里，等客户补件那一段算不算？"</td>
+          <td>材料散落的具体位置 / "已接收"与"已核对"的差别 / 处理时间与等待时间混算</td>
+        </tr>
+        <tr>
+          <td class="tname">赫利克斯资本</td>
+          <td>"摘出来的数字，您还要回原文核哪几项？"<br>"实际值、共识值、差值，草稿里有分开标吗？"<br>"哪些材料不能进模型？是许可问题还是合规问题？"</td>
+          <td>返工点在哪 / 口径混淆 / 数据授权边界</td>
+        </tr>
+        <tr>
+          <td class="tname">华衡智造</td>
+          <td>"客户在群里说加到 1200 件，这个 V3 会签了吗？"<br>"MES 还在按 V2 排，你们怎么发现版本不一致的？"<br>"900 件产能加 200 件库存是 1100，差 100 件谁定？加班谁批？"<br>"86% 交付率按订单行算、销售周报按客户订单算，对外用哪个？"</td>
+          <td>版本冲突 / 变更发现机制 / 产能缺口与审批权 / 两个口径不能直接比</td>
+        </tr>
+        <tr>
+          <td class="tname">青禾报销助手</td>
+          <td>"员工问'还缺什么'，您现在要开几个系统才能答？"<br>"员工问自己单据进度，您有权限查吗？查不到怎么回？"<br>"制度更新了，旧版本还挂在哪儿？谁负责下架？"</td>
+          <td>查询路径与耗时 / 权限拒绝的真实场景 / 有效版本维护成本</td>
+        </tr>
+        <tr>
+          <td class="tname">鸿蒙设备告警</td>
+          <td>"这条告警的截图上有采样时间吗？您怎么判断是新数据？"<br>"断网恢复后重复上报，您怎么知道是同一条告警？"<br>"设备编号在传感器、网关、App 里是同一个吗？"<br>"谁有权让设备重启？模型能不能直接下指令？"</td>
+          <td>过期告警 / 重复工单 / 设备映射 / 危险动作的授权边界</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="maphd" style="margin-top:30px">
+    <h2 style="color:#8e2f25">五种问错的问法：问了等于白问</h2>
+    <span>这几句话很顺口，但拿不到任何可用证据</span>
+  </div>
+  <div class="qbankgrid">
+    <div class="qcard bad">
+      <h3>❌ 反问式</h3>
+      <ol>
+        <li>"您觉得 AI 能帮您做什么？"<span class="why">让客户替你设计方案，得到的是想象，不是事实。</span></li>
+        <li>"是不是因为系统太老了？"<span class="why">诱导性提问，对方会顺着你点头。</span></li>
+      </ol>
+    </div>
+    <div class="qcard bad">
+      <h3>❌ 平均值式</h3>
+      <ol>
+        <li>"你们平均一天处理多少单？"<span class="why">平均值把异常全抹平了，要问最近一单。</span></li>
+        <li>"这种情况多吗？"<span class="why">"挺多的"不是证据，要问"上一次是什么时候"。</span></li>
+      </ol>
+    </div>
+    <div class="qcard bad">
+      <h3>❌ 假设式</h3>
+      <ol>
+        <li>"如果有个功能能自动填表，您会用吗？"<span class="why">假设性问题，答案没有验证价值。</span></li>
+        <li>"要是能省一半时间，是不是就愿意上？"<span class="why">把意愿当成需求，后面验收一定翻车。</span></li>
+      </ol>
+    </div>
+    <div class="qcard bad">
+      <h3>❌ 越界式</h3>
+      <ol>
+        <li>"其他部门是不是也这样？"<span class="why">替别人回答，不可核实，也不能写进证据。</span></li>
+        <li>"你们领导应该支持吧？"<span class="why">决策权要问决策者本人，不能替人确认。</span></li>
+      </ol>
+    </div>
+    <div class="qcard good wide">
+      <h3>✅ 一条通用替换原则</h3>
+      <ol>
+        <li>只要对方说"经常""有时候""一般"，立刻追一句：<b>"最近一次是什么时候？那次具体发生了什么？"</b></li>
+        <li>只要对方给了一个数字，追一句：<b>"这个数从哪来的？我能看一下原始记录吗？"</b></li>
+        <li>一次只问一个问题。连着问三个，对方只会回答最后一个。</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="howto">
+    <h2>怎么走：进实验室 / 出实验室的标准动作</h2>
+    <ol>
+      <li>从项目页进入 <code>FDE 全流程</code>，切到阶段 <b>01 业务挖掘</b>或 <b>02 现场调研</b>，页面顶部就是阶段工作台。</li>
+      <li>点 <b>进入 3D 业务现场</b>：案例项目用 <code>/case-lab?case=案例key</code>，集团项目用 <code>/group-training</code> 里选定的模块进入独立现场。</li>
+      <li>现场里先看<b>六位角色的公开问题</b>（问题提出人排第一，其余从业务、流程、技术、风险、下游五个视角核实），再逐个发起访谈。</li>
+      <li>访谈完成后在实验室里点 <b>「将已访谈事实加入项目证据台账」</b>——导入只是"待核实"，不等于确认需求，也不会自动完成任务。</li>
+      <li>点 <b>「生成项目报告并交接」</b>，报告带归纳依据、四来源状态和待核实问题，导出的文件进入阶段 02/03 的成果工作台。</li>
+      <li>回到全流程，在阶段 01/02 逐项填写任务结论、证据位置、责任人，再提交关卡评审。</li>
+    </ol>
+    <div class="warn">⚠️ 两个最容易错的地方：① 阶段 03 之后<b>不要</b>再去找实验室入口，那里没有；② 实验室只记录"已采集事实"，公开开场陈述<b>不算</b>采集到的事实，六个人都聊完也<b>不等于</b>拿到了 Buyer / Brief / Industry / Operator 四种视角的完整证据。</div>
+  </div>
+
+<section class="intro" aria-label="系统表单填写指南">
+  <h2>系统表单怎么填</h2>
+  <p><strong>任务记录</strong>包含状态、结论、证据位置和责任人。结论按各任务的填写提纲组织，写明发现、影响和待验证事项。证据位置写材料名称、版本及页码或记录编号。责任人写能确认结果或跟进缺口的人。标记「已完成」时，结论、证据位置、责任人均须填写。</p>
+  <p><strong>阶段关卡</strong>包含状态、评审人、依据和明确结论。选择「通过」前，本阶段三项任务须全部完成，前序关卡也须通过。修改任务记录后，本阶段及后续已通过的关卡会变成「待复核」。</p>
+  <p><strong>华衡智造演练示例</strong>可用同一个 REQ-01 串起订单变更练习。以一次版本不同步的事件为起点，记录只读影响分析的需求，关联 Demo 版本、冲突样本和测试结果，再用试点记录核对返工变化。以下提纲可用于组织填写内容，证据编号和测量值以本次实训记录为准。</p>
+</section>
+<section class="intro" aria-label="虚拟实验室与访谈速查">
+<h2>虚拟实验室与访谈速查</h2>
+<p><strong>直接进角色现场</strong>　01-3 确认立项与决策链，02-1 开展角色访谈。01-1 和 01-2 缺触发事件或基线时提前补访；02-2 和 02-3 遇到流程分歧或缺证时回访。</p>
+<p><strong>按任务做演练</strong>　07-2 用客户会议与验收观察用户操作；08-3 用同一入口做交接确认；09-2 用客户现场事件演练故障与变更。05–06 的构建、评估主要使用原型与评估工作区，具体入口见各任务。</p>
+<p>每项任务标明对应工作区和沟通类型。直接访谈用于采集一手事实，按需补访用于补证，评审和验收用于确认交付或决定。下方人名来自华衡智造案例，换案例时按相同职责选择角色。</p>
+<p><strong>提问顺序</strong>　先请对方讲最近一单，再追问时间、版本、异常和交接，最后索取可复核记录。可用「您刚才说的是这单实际发生的，还是制度要求的？」核对口径。写下角色、原话、记录位置和待核实项。</p>
+</section>
+  <!-- 01 业务挖掘 -->
+  <section class="stage" id="s1">
+    <div class="stage-head green">
+      <span class="stage-no">STAGE 01</span>
+      <div>
+        <div class="stage-title">业务挖掘</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>从经营目标、真实事件和指标基线中判断「这个问题值不值得立项」。关键词是"具体"——不许停留在"想用 AI 提效"，必须落到一个真实发生的异常事件上。</div>
+        <div class="stage-flag"><span class="badge lab">🧪 本阶段 3 项任务都要进实验室</span><span class="badge talk">🎙 2 项需要访谈</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task lab-on">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">识别业务机会</span><span class="badges"><span class="badge lab">🧪 进实验室</span><span class="badge desk">💻 不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「简报」。</p><p><strong>找谁、怎么问</strong>　按需补访｜陈思雨（销售）或李佳宁（客服）｜最近哪一单触发了需求？从客户提出变更到录入，中间等了什么？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">触发事件和日期 → 涉及岗位 → 现状损失 → 要改善的业务结果 → 待核实项</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">收集<b>最近一次异常事件</b>作为触发点；区分客户口头提出的"功能诉求"和真正要改善的"业务结果"。例如客户说"做个聊天机器人"是功能，"补件往返导致理赔超时"才是业务结果。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">进实验室先读<b>六位角色的公开问题</b>和问题提出人的触发事件——这是调查入口，不是已确认事实，也不能直接写成需求。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>业务机会清单</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">哪个具体事件触发了需求？如果维持现状，会产生什么损失？</span></span></div>
+        </div>
+      </div>
+      <div class="task lab-on">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">建立现状基线</span><span class="badges"><span class="badge lab">🧪 进实验室</span><span class="badge talk">🎙 访谈核口径</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「证据与验收台账」。</p><p><strong>找谁、怎么问</strong>　按需补访｜唐晓峰（财务）、李佳宁（客服）｜耗时从哪一步算到哪一步？操作时间和审批等待能分别测吗？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">指标及单位 → 起止点或分子/分母 → 时间窗 → 样本量及筛选条件 → 基线值或待采集 → 测量负责人</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">给核心指标定义清楚<b>分子、分母、时间窗、样本来源和测量责任人</b>——比如"处理时长"从什么时候算到什么时候。缺数据的项目老实列为"待采集"，不许拍脑袋填数。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">在实验室选定<b>一单真实样本</b>，向一线确认"上一次到底花了多久、返工几次"，口径以当事人陈述加原始单据为准。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">只找<b>一线执行者</b>（Operator）：卡尔德一线理赔员、赫利克斯 Rachel Kim、华衡陈思雨/王建国、青禾小林/周敏、鸿蒙陈晨/唐悦。<b>不要问管理者</b>——他给的是印象值，不是实际耗时。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>指标基线与价值假设</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">现状耗时、返工和错误如何计算？哪些数字还只是估计？</span></span></div>
+        </div>
+      </div>
+      <div class="task lab-on">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">确认立项与决策链</span><span class="badges"><span class="badge lab">🧪 进实验室</span><span class="badge talk">🎙 必做访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　进入实验室做角色访谈。对应入口为「角色访谈」。</p><p><strong>找谁、怎么问</strong>　直接访谈｜周明远（总经理）、沈悦（信息化）、许文静（质量）｜谁批预算、谁授权数据、谁有权叫停？分别在哪里留痕？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">发起人、使用者、出资者和审批者 → 各自决定权 → 授权记录 → 纳入及排除的部门、流程和数据</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">分清四种角色：<b>业务发起人、日常使用者、出资者、审批者</b>；同时记录访谈授权和调查边界——哪些部门能去问、哪些数据能看。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">决策链<b>只能问出来，查不出来</b>。找业务负责人角色直接问审批权、预算归属、能不能继续；找风险角色确认数据访问红线。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">必须同时见到两类人：<b>Buyer 业务决策者</b>（卡尔德 Greg Hadley／赫利克斯 Sarah Mendez／华衡周明远／青禾员工服务负责人／鸿蒙顾岚）＋<b>风险合规</b>（Marcus Hill／Mei／沈悦／信息安全联络人／许安）。只问一线永远问不出预算和审批权。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>项目章程与利益相关者地图</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">谁承担结果？谁批准范围、数据访问及继续或停止？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>业务负责人确认问题、指标口径与调查范围，并填写评审人、评审依据和明确结论后放行。</div>
+    </div>
+  </section>
+
+  <!-- 02 现场调研 -->
+  <section class="stage" id="s2">
+    <div class="stage-head green">
+      <span class="stage-no">STAGE 02</span>
+      <div>
+        <div class="stage-title">现场调研</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>还原实际流程，用多角色、多来源材料核实问题。核心原则：耳朵听到的都要交叉验证，"六个人都这么聊"不等于拿到了完整证据。</div>
+        <div class="stage-flag"><span class="badge lab">🧪 本阶段是实验室的主战场</span><span class="badge talk">🎙 六角色访谈在这里完成</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task lab-on">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">开展角色访谈（本阶段核心动作）</span><span class="badges"><span class="badge lab">🧪 必进（核心）</span><span class="badge talk">🎙 必做访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　进入实验室做角色访谈。对应入口为「角色访谈」。</p><p><strong>找谁、怎么问</strong>　直接访谈｜先找陈思雨、李佳宁，再找王建国（生产计划）、孙立新（仓储）、许文静、沈悦｜请从最近一单开始，逐步说谁接手、用了哪个版本、在哪一步返工，并指给我看对应记录。</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">受访者和岗位 → 最近一单的时间线 → 系统与交接 → 返工影响 → 原话和待核实分歧</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">分别访谈<b>一线操作者、业务负责人、系统和风险角色</b>，围绕"最近一单"记录具体事件——尤其要记下<b>相互矛盾的陈述</b>，矛盾点往往就是问题所在。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">六位角色每人有<b>逐步披露的访谈线索</b>（全场合计 36 条），问得越具体披露越多。问题提出人优先问，其余从业务、流程、技术、风险、下游五个视角补齐。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt"><b>一个问题提出人 + 五个交叉核实视角</b>，顺序别乱：<br>① 问题提出人（卡尔德一线理赔员／赫利克斯 Rachel Kim／华衡陈思雨／青禾小林／鸿蒙顾岚）→ ② 一线执行 → ③ 业务负责人 → ④ 技术/系统 → ⑤ 风险/合规 → ⑥ 下游接收者（客服/服务台/财务）。<br>六人名单见上方「按目的找对人」表；集团项目按所选模块现场的角色名录谈。<b>先把开场陈述听完再问细节，别一上来就问方案。</b></span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>访谈记录与角色地图</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">请按最近一单讲完整过程：谁接手、用什么系统、哪里返工？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">还原现状流程</span><span class="badges"><span class="badge desk">💻 三视角白板</span><span class="badge desk">不需新访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「三视角工作台」。</p><p><strong>找谁、怎么问</strong>　按需补访｜王建国、孙立新、许文静｜系统版本冲突时，现场用哪份记录？异常交给谁处理？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">触发和输入 → 各角色实际动作 → 判断及交接 → 正常输出 → 异常分支、处理人和证据</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">画出现状泳道图：触发 → 输入 → 交接 → 人工判断 → 输出 → 异常路径，一般 8–15 个步骤；在瓶颈处标明责任人。同时区分<b>判断点</b>（决定做什么）和<b>执行点</b>（实际去做），这直接决定后面智能体怎么分工。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">不用再进实验室，用刚谈完的记录在<b>三视角工作台</b>上画；画不出来的地方，说明访谈还有缺口，回去补问而不是自己猜。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>现状流程图与异常路径</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">理想流程与现场做法有什么差异？哪些判断只能由人完成？</span></span></div>
+        </div>
+      </div>
+      <div class="task lab-on">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">四来源收敛与材料核对</span><span class="badges"><span class="badge lab">🧪 必进（生成报告）</span><span class="badge opt">🟣 有矛盾再追问</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「证据与验收台账」。</p><p><strong>找谁、怎么问</strong>　按需补访｜周明远核对目标，陈思雨和李佳宁核对实际，沈悦核对技术条件｜哪条原始记录能支持这个说法？哪些地方还对不上？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">Buyer目标 → Brief版本和范围 → Industry可行性依据 → Operator现场故障 → 一致点、分歧及补证负责人</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">比较四个视角是否指向同一个瓶颈：<b>Buyer</b>（业务决策者要改善什么）、<b>Brief</b>（书面需求的范围与排除项）、<b>Industry</b>（行业里这样做到没做到过）、<b>Operator</b>（一线最近一单实际怎么坏的）。再用制度、日志、单据、现场观察交叉核实，有分歧就保留分歧，不替任何一方改口。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">回实验室点 <b>「生成项目报告并交接」</b>，报告会列出归纳依据、四来源状态和待核实问题；同时把已访谈事实<b>导入证据台账</b>（状态为待核实）。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>四来源收敛表、证据台账与问题清单</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">哪份记录能支持这个说法？时间、版本和样本口径是否一致？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>关键流程、异常、证据矛盾和待核实项均已形成记录。<b>注意：实验室报告是输入，不是评审；导出报告不会自动通过关卡。</b></div>
+    </div>
+  </section>
+
+  <!-- 03 需求定义 -->
+  <section class="stage" id="s3">
+    <div class="stage-head green">
+      <span class="stage-no">STAGE 03</span>
+      <div>
+        <div class="stage-title">需求定义</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>把调查发现收敛为<b>有证据、可验收、可追责</b>的需求。一条合格的需求必须能回答：谁、在什么情境、完成什么任务、依据哪条证据、怎么算通过。</div>
+        <div class="stage-flag"><span class="badge desk">💻 本阶段不上现场</span><span class="badge opt">🟣 只有验收阈值建议找业务确认</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">确定优先问题</span><span class="badges"><span class="badge desk">💻 线上</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「阶段作品」。</p><p><strong>找谁、怎么问</strong>　按需补访｜周明远、唐晓峰｜哪个问题发生最多、损失最大？用哪组样本能证明？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">候选问题 → 各自的损失、频率和可解决性 → 选中项及证据 → 暂缓项及理由</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">按<b>业务损失大小、发生频率、可解决性</b>三个维度排序，并写清楚"为什么选这个问题、为什么暂缓那些问题"——没有足够证据支撑的需求要标出来，不能混进来。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>问题优先级与机会判断</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">解决哪一个瓶颈最有价值？哪些需求还没有足够证据？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">编写需求与边界</span><span class="badges"><span class="badge desk">💻 线上</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「本步交付物」。</p><p><strong>找谁、怎么问</strong>　按需补访｜陈思雨、王建国、许文静｜你在什么情况下需要这份输出？哪些决定必须留给人？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">REQ编号 → 角色、场景和任务 → 输入和输出 → 授权及排除范围 → 异常处理 → 证据编号和业务负责人</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">每条需求编号（REQ 编号贯穿后续方案、构建、评估全程），关联证据、使用者、业务负责人、输入输出，并明确<b>排除范围</b>（明确不做什么）和异常处置方式。证据栏只填本次真正采集到的事实编号，不能借用别人的案例。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>需求规格与追溯矩阵</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">谁在什么情境完成什么任务？明确不做什么？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">约定验收标准</span><span class="badges"><span class="badge desk">💻 线上</span><span class="badge opt">🟣 阈值找业务确认</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「证据与验收台账」。</p><p><strong>找谁、怎么问</strong>　评审确认｜王建国、李佳宁、许文静｜给哪几单就能判断是否通过？哪一种错一次就必须停？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">REQ编号 → 样本和前置条件 → 操作 → 预期结果与阈值 → 必须拒绝的条件 → 评审及签核人</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">把需求改写成<b>可执行的样例和阈值</b>：用什么样本测、谁评审、什么情况直接拒绝（一例都不能接受的错误要单独列出）、谁签字确认。阈值是客户认的，不是自己定的。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>验收清单与需求确认记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">达到什么结果才算通过？哪些错误一例也不能接受？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>问题优先级、需求范围和可测验收条件均有确认记录。</div>
+    </div>
+  </section>
+
+  <!-- 04 方案设计 -->
+  <section class="stage" id="s4">
+    <div class="stage-head amber">
+      <span class="stage-no">STAGE 04</span>
+      <div>
+        <div class="stage-title">方案设计</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>以<b>最小试点</b>验证价值，而不是一上来做大平台。方案必须同时设计好三件事：技术架构、数据/权限边界、人工控制点——以及客户要为它付多少钱。</div>
+        <div class="stage-flag"><span class="badge desk">💻 纯桌面工作，不进实验室</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">选定最小试点（切入点）</span><span class="badges"><span class="badge desk">💻 线上</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「阶段作品」。</p><p><strong>找谁、怎么问</strong>　评审确认｜周明远、沈悦、许文静｜首轮只做只读分析，够不够验证价值？什么结果会让我们放弃该方案？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">候选做法 → 价值、失败后果及可恢复性 → 最小试点选择和取舍理由 → 本轮排除项</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">列出 3–5 个候选方案（人工优化 / 确定性规则 / 模型方案），用<b>价值-风险矩阵</b>比较：改善多少工时成本？失败了能不能及时发现、拦截、撤销？选一个边界明确、失败可恢复的任务先做。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>试点方案与方案比较</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">为什么需要模型？有没有更简单的方法？试点排除什么？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">设计数据和系统边界</span><span class="badges"><span class="badge desk">💻 白板 + 权限矩阵</span><span class="badge opt">🟣 权限须客户确认</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「三视角工作台」。</p><p><strong>找谁、怎么问</strong>　评审确认｜沈悦、何文博（工程）、许文静｜哪个系统是权威来源？版本冲突或权限不足时，谁接手？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">流程步骤及REQ编号 → 业务对象、状态和关系 → 数据来源及版本 → 读写权限 → 接口失败及人工复核</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">定义数据版本、<b>权限矩阵</b>（谁能读什么、写什么）、接口契约、工具限制、模型职责和<b>人工复核节点</b>。不可逆动作（对外发送、审批、支付、生产写入）前必须设确定性校验；低置信、缺数据、越权情况要有停止条件和具名人工接收人。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>架构图、数据与权限矩阵</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">数据从哪来？谁能读写？接口失效或越权时怎么办？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">报价与投入产出测算</span><span class="badges"><span class="badge desk">💻 ROI 测算</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「ROI 测算」。</p><p><strong>找谁、怎么问</strong>　评审确认｜唐晓峰、周明远｜节省工时能实际兑现多少？复核和运营成本算进去了吗？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">报价及范围 → 月运行成本 → 业务量、节省时间、采用率及兑现假设 → 首年净收益、ROI和回本期 → 待验证假设</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">列明<b>一次性实施报价、每月运行费用和交付范围</b>；根据已调研的业务量、节省时间与成本，估算首年净收益、ROI 和回本时间。所有假设保留验证计划——收益没验证前不能当成事实。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>项目报价、首年 ROI 测算与实施评估计划</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">客户要付多少钱？每月实际省多少？多久回本？节省工时能否兑现为现金？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>试点边界、方案取舍、数据权限与实施计划已评审。</div>
+    </div>
+  </section>
+
+  <!-- 05 构建集成 -->
+  <section class="stage" id="s5">
+    <div class="stage-head purple">
+      <span class="stage-no">STAGE 05</span>
+      <div>
+        <div class="stage-title">构建集成</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>实现一个<b>可运行的最小闭环</b>，让规则、模型与人工责任都可追溯。评价标准不是"功能多"，而是：可运行、可复现、出问题能转人工。</div>
+        <div class="stage-flag"><span class="badge desk">💻 原型台，不进实验室</span><span class="badge opt">🟣 缺数据才回现场索取</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">落实数据与工具契约</span><span class="badges"><span class="badge desk">💻 原型与评估</span><span class="badge opt">🟣 缺数据回现场</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「原型与评估」。</p><p><strong>找谁、怎么问</strong>　按需补访｜沈悦、相关数据负责人｜样本能否用于试点？接口替身与真实系统差在哪里？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">数据与字段约定 → 样本来源、授权及版本 → 接口输入输出和错误 → 替身覆盖及真实接入差距</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">准备授权样本、数据清洗和接口替身（stub），<b>固定字段、版本、权限和测试输入</b>。要清楚标注合成适配与真实接口之间的差距，不能拿替身的数据假装真实跑通。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">所需的原始样本如果阶段 02 没拿到，这步要<b>回客户现场补索取</b>——不是编一份假数据顶上。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>数据契约与集成记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">合成适配与真实接口之间有哪些差距？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">实现业务闭环</span><span class="badges"><span class="badge desk">💻 原型代码</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　使用原型与评估工作区执行。对应入口为「原型与评估」。</p><p><strong>找谁、怎么问</strong>　无需常规访谈｜在原型里跑一单，记录规则、模型和人工各处理哪一段。</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">REQ编号和构建版本 → 输入到输出的运行步骤 → 规则、模型和人工分工 → 运行证据 → 未实现项</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">把<b>硬规则、模型判断、工具调用、人工复核</b>四类逻辑分开实现，打通从输入到输出的完整路径。每个输出都要能回答：来自哪条来源、哪条规则、哪个模型、谁确认的。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>原型代码与版本说明</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">每个输出如何追溯到来源、规则、模型和确认人？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">实现异常与审计</span><span class="badges"><span class="badge desk">💻 原型代码</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「原型与评估」。</p><p><strong>找谁、怎么问</strong>　按需补访｜沈悦、王建国、许文静｜冲突、超时或越权时谁接单？怎么知道同一请求没有执行两次？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">异常类型 → 触发条件 → 停止、重试或转人工 → 防重复措施 → 审计记录位置</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">补齐六类异常路径：<b>超时、缺数据、冲突、越权、重复请求、降级</b>；保存关键审计字段。系统能力不够时要能停下来转人工，并且不能把同一件事重复执行两遍。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>异常处理与审计样例</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">无法可靠完成时怎样停止、转人工并避免重复执行？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>指定版本可复现运行，异常和人工交接路径完整。</div>
+    </div>
+  </section>
+
+  <!-- 06 测试评估 -->
+  <section class="stage" id="s6">
+    <div class="stage-head purple">
+      <span class="stage-no">STAGE 06</span>
+      <div>
+        <div class="stage-title">测试评估</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>用证据证明系统行为与需求一致。必须区分三种验证：<b>模拟验证、真实模型验证、业务验收</b>——没执行过的项目不能写成"通过"。</div>
+        <div class="stage-flag"><span class="badge desk">💻 线上跑测试与评审</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">建立评估集合</span><span class="badges"><span class="badge desk">💻 评估集</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「原型与评估」。</p><p><strong>找谁、怎么问</strong>　按需补访｜王建国、许文静、沈悦｜哪种错误最危险？拿哪条冲突、冻结或越权记录来测？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">用例编号及REQ编号 → 正常、边界、对抗、权限或故障类别 → 输入与预期 → 阈值及失败成本</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">用例覆盖五类场景：<b>正常、边界、对抗、权限、故障</b>；每一例都关联到具体需求（REQ 编号）和失败成本。优先覆盖"最昂贵、最危险"的失败方式。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>评估集与需求覆盖表</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">是否覆盖了最昂贵和最危险的失败？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">执行测试与重复评估</span><span class="badges"><span class="badge desk">💻 代码快照</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　使用原型与评估工作区执行。对应入口为「原型与评估」。</p><p><strong>找谁、怎么问</strong>　无需常规访谈｜执行评估，保留版本、运行模式、日志和跳过原因。</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">版本、环境及执行模式 → 样本覆盖 → 实际结果与重复次数 → 失败或跳过项 → 日志位置</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">运行<b>指定代码快照</b>（版本固定才能复现），保留执行模式、样本覆盖、跳过项、重复结果和审计轨迹。结果来自模拟还是真实调用，必须如实标注。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>测试报告与评估结果</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">结果来自模拟还是真实调用？跳过了什么？是否可复现？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">修复并回归确认</span><span class="badges"><span class="badge desk">💻 质量评审</span><span class="badge opt">🟣 请业务角色评审</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「质量评审与复盘」。</p><p><strong>找谁、怎么问</strong>　评审确认｜沈悦、对应业务或质量负责人｜修复后用哪些原用例和关联用例回归？剩余风险谁接受？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">缺陷及关联用例 → 原因 → 修复版本 → 复测和回归结果 → 剩余风险及业务评审意见</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">定位失败原因，记录修复、复测和<b>未解决项</b>；请业务角色评审输出是否满足真实场景。若关键需求始终不达标，要敢于提出"改方案"甚至"停止试点"。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">这里的"业务角色评审"是<b>评审会性质</b>，不需要重跑实验室访谈，但要请真实业务的人看输出对不对。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>缺陷闭环与质量结论</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">哪些需求仍未达标？需要改变方案还是停止试点？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>评估范围、版本、失败项、修复复测与剩余风险可审查。</div>
+    </div>
+  </section>
+
+  <!-- 07 客户试点 -->
+  <section class="stage" id="s7">
+    <div class="stage-head purple">
+      <span class="stage-no">STAGE 07</span>
+      <div>
+        <div class="stage-title">客户试点</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>在受控范围内验证<b>实际采用</b>和<b>业务收益</b>。技术指标过关不等于业务成功——用户用不用、成本降没降，要拿同口径数据说话。</div>
+        <div class="stage-flag"><span class="badge desk">💻 不用实验室</span><span class="badge talk">🎙 UAT 必须面对真实使用者</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">准备受控试点</span><span class="badges"><span class="badge desk">💻 试点计划</span><span class="badge opt">🟣 确认用户与退出信号</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「本步交付物」。</p><p><strong>找谁、怎么问</strong>　评审确认｜周明远、李佳宁、许文静｜谁参与、用什么对照？什么信号触发暂停？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">参与角色与授权 → 范围、样本和时长 → 对照与观测口径 → 兜底人员及退出条件</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">确定试点用户、样本、时长、<b>对照组</b>、人工兜底方案和授权范围；事先约定退出信号——出现什么情况立刻停。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">"谁来当试点用户、什么情况算失败"必须和业务负责人当面确认，写进计划，不能自己定。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>试点执行计划</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">谁参与？遇到什么信号立刻退出？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">开展用户验收（UAT）</span><span class="badges"><span class="badge talk">🎙 必做访谈</span><span class="badge desk">客户会议与验收</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　使用客户会议与验收做情境演练。对应入口为「客户会议与验收」。</p><p><strong>找谁、怎么问</strong>　用户验收｜陈思雨、李佳宁、王建国｜请独立完成一单并说出卡住的地方。遇到版本冲突，你会怎么处理？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">用户和任务 → 正常及异常操作 → 完成结果及耗时 → 反馈、障碍及缺陷 → 验收意见</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">让真实使用者按真实任务走<b>正常路径和异常路径</b>，记录反馈、操作成本、采用障碍和不通过项——重点看用户能不能<b>独立</b>完成任务。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">进入<b>客户会议与验收</b>通道，逐个用户走任务；用户卡住的地方不要替他点，记下来就是采用障碍。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">找<b>真实一线使用者</b>，不是部门领导：卡尔德一线理赔员／赫利克斯 Rachel Kim／华衡陈思雨、李佳宁／青禾小林、乔姐／鸿蒙陈晨、唐悦。管理层说"挺好用"不算验收。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>用户验收与反馈记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">用户能独立完成任务吗？输出在什么地方仍不可用？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">核对价值与继续决定</span><span class="badges"><span class="badge desk">💻 收益复核</span><span class="badge opt">🟣 与业务核归因</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「证据与验收台账」。</p><p><strong>找谁、怎么问</strong>　评审确认｜唐晓峰、周明远｜改善来自工具还是样本变化？扣除人工和运行成本后，继续、修改还是停止？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">同口径基线与试点结果 → 样本和采用率 → 兑现收益、运行及人工成本 → 归因限制 → 继续、修改或停止</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">用立项时<b>同口径</b>的指标比较前后变化，扣除运行和人工成本后复核 ROI；明确记录：继续、修改还是停止。改善必须可归因于本方案，不能把大盘波动算成自己的功劳。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>试点收益复核与决策纪要</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">观察到的改善是否可归因？扩大试点还需要补哪些证据？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>试点对照、用户反馈、退出条件与扩大范围决定有记录。</div>
+    </div>
+  </section>
+
+  <!-- 08 上线交接 -->
+  <section class="stage" id="s8">
+    <div class="stage-head red">
+      <span class="stage-no">STAGE 08</span>
+      <div>
+        <div class="stage-title">上线交接</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>把通过试点的版本交给<b>具名负责人</b>，明确上线和回退责任。判断标准：FDE 离开现场后，客户自己也能把系统跑起来、管起来。</div>
+        <div class="stage-flag"><span class="badge desk">💻 不用实验室</span><span class="badge talk">🎙 三方评审 + 交接会必须开口</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">审查上线准备</span><span class="badges"><span class="badge talk">🎙 必做（三方评审）</span><span class="badge desk">💻 检查表</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「证据与验收台账」。</p><p><strong>找谁、怎么问</strong>　评审确认｜周明远、沈悦、许文静｜各自负责签什么？还有哪项会阻止上线？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">拟发布版本 → 业务验收与技术质量 → 权限、预算、监控和值守 → 阻断项 → 三方评审意见</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">核对业务验收、技术质量、数据权限、预算、监控、值守和遗留风险，形成<b>业务、技术、风险三方评审</b>意见。要明确谁有权批准上线、哪些缺口会阻止发布。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">评审必须让三方<b>各自表态</b>并留结论；只要有一方说"不行"，就要记录缺口而不是绕过。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">三方各出一位且要具名：<b>业务</b>（Greg／Sarah／周明远／员工服务负责人／顾岚）＋<b>技术</b>（Anil Gupta／Aditya／沈悦／陈工／林越）＋<b>风险</b>（Marcus Hill／Mei／许文静／信息安全联络人／许安）。缺任何一方，评审不成立。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>上线准备检查与三方评审</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">谁有权批准上线？哪些缺口阻止发布？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">演练发布与回滚</span><span class="badges"><span class="badge desk">💻 演练</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「本步交付物」。</p><p><strong>找谁、怎么问</strong>　演练确认｜沈悦与值守人员、受影响的业务负责人｜谁宣布回滚？恢复后用哪一单确认可用？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">版本及窗口 → 灰度对象 → 监控及回滚触发阈值 → 回滚步骤和负责人 → 恢复验证记录</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">固定交付版本、发布窗口、灰度范围、<b>回滚触发器和步骤</b>，并<b>实际演练一次故障恢复</b>——不是写在文档里就算，要真跑一遍。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>发布计划与回滚演练记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">怎样发现故障、停止影响并恢复到已知可用版本？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">完成运维和用户交接</span><span class="badges"><span class="badge talk">🎙 必做（交接会）</span><span class="badge desk">客户会议</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　使用客户会议与验收做情境演练。对应入口为「客户会议与验收」。</p><p><strong>找谁、怎么问</strong>　交接确认｜沈悦、李佳宁及业务接收人｜你能否按手册接手一次异常？无法解决时找谁？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">交付版本、资产和权限 → 运行手册及培训 → 具名业务和技术负责人 → 支持与升级路径 → 签收依据</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">交付运行手册、培训、权限和资产清单；明确<b>业务负责人、维护人、支持渠道和升级路径</b>，由具名角色签收——"谁来接手"必须落到具体的人。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">交接会上让接手人<b>复述一遍</b>：出故障找谁、怎么回滚、找谁批变更。复述不出来的，说明交接没完成。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">找<b>实际要接手的人</b>，不是签字领导：卡尔德 Anil Gupta（CIO）／赫利克斯 Aditya（技术负责人）／华衡沈悦（信息化）／青禾陈工 + 信息安全联络人／鸿蒙林越、唐悦（服务台）。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>交接清单、运行手册与签收记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">离开项目后，谁处理故障、资料变更和用户反馈？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>业务、技术和风险角色的上线准备及交接决定有依据。</div>
+    </div>
+  </section>
+
+  <!-- 09 运营迭代 -->
+  <section class="stage" id="s9">
+    <div class="stage-head red">
+      <span class="stage-no">STAGE 09</span>
+      <div>
+        <div class="stage-title">运营迭代</div>
+        <div class="stage-goal"><b>这个阶段在干什么：</b>上线不是终点。持续观察价值、质量和成本，把运营中冒出来的新问题变成<b>下一轮有依据的业务发现</b>——九阶段形成循环。</div>
+        <div class="stage-flag"><span class="badge desk">💻 不用实验室</span><span class="badge talk">🎙 一次客户事件演练</span></div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="task">
+        <div class="task-head"><span class="task-idx">1</span><span class="task-name">建立持续运营节奏</span><span class="badges"><span class="badge desk">💻 运营计划</span><span class="badge desk">不需访谈</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「本步交付物」。</p><p><strong>找谁、怎么问</strong>　按需补访｜沈悦、李佳宁、唐晓峰｜哪个指标先报警？谁响应？什么时候重新核对收益？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">30/60/90天观察安排 → 质量、价值、成本、采用及漂移口径 → 阈值 → 频率及责任人</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">为质量、价值、成本、采用率、模型漂移设定<b>指标与报警阈值</b>，指定观察频率和责任人，形成 30/60/90 天运营计划。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>30/60/90 天运营计划</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">何时报警？谁响应？多久重新核对一次业务价值？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">2</span><span class="task-name">演练事件与变更管理</span><span class="badges"><span class="badge talk">🎙 必做（事件演练）</span><span class="badge desk">客户现场事件</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　使用客户现场事件做故障演练。对应入口为「客户现场事件」。</p><p><strong>找谁、怎么问</strong>　现场演练｜沈悦、王建国、许文静｜如果系统仍使用过期版本，谁发现、谁叫停、谁确认恢复？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">事件或变更及版本 → 发现、影响、处置和回滚时间线 → 根因 → 修复、回归和关闭依据</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">演练一次失效或资料变更，完整记录<b>发现 → 处置 → 回滚 → 根因 → 修复 → 回归</b>。规则、数据或模型每次更新后，都要检查会不会让旧需求失效。</span></div>
+          <div class="row"><span class="lbl h">现场</span><span class="txt">在<b>客户现场事件</b>通道里让客户方反馈问题，你按真实压力处置——这是九阶段里唯一带客户压力的模拟。</span></div>
+          <div class="row"><span class="lbl h">对象</span><span class="txt">找<b>报障的一线 + 接单的服务台</b>：卡尔德一线理赔员／赫利克斯 Rachel Kim／华衡李佳宁（客服主管）／青禾小林／鸿蒙唐悦（工单接收人）。别找高层演，高层不会给你真实报障语气。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>事件复盘与变更记录</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">更新规则、数据或模型后怎样避免旧需求失效？</span></span></div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-head"><span class="task-idx">3</span><span class="task-name">复盘并启动下一轮发现</span><span class="badges"><span class="badge desk">💻 复盘</span><span class="badge opt">🟣 建议开复盘会</span></span></div>
+        <div class="task-body">
+          <aside style="margin:0 0 12px;padding:10px 14px;background:#e3eefb;border-radius:8px"><p><strong>实验室 / 工具</strong>　按访谈缺口返回角色现场；本步主要在对应工作区完成。对应入口为「质量评审与复盘」。</p><p><strong>找谁、怎么问</strong>　复盘确认｜周明远、李佳宁、唐晓峰、沈悦｜哪项改进最值得继续？有哪些运营记录支持？</p></aside>
+          <div class="row"><span class="lbl">填写提纲</span><span class="txt">目标与实际结果 → 采用反馈及剩余风险 → 持续、扩展或退役决定 → 下一轮优先事项和证据</span></div>
+          <div class="row"><span class="lbl">要求</span><span class="txt">汇总采用反馈、遗留风险和新增机会，决定项目<b>持续、扩展还是退役</b>；导出可审查的作品集，让下一轮立项从证据出发而不是从感觉出发。</span></div>
+          <div class="row"><span class="lbl o">交付</span><span class="txt"><b>项目复盘、迭代清单与作品集</b></span></div>
+          <div class="row"><span class="lbl q">追问</span><span class="txt"><span class="ask">下一轮应该解决哪个问题？有什么证据支持投入或终止？</span></span></div>
+        </div>
+      </div>
+      <div class="gate"><b>🔒 阶段关卡：</b>运营节奏、事件闭环、复盘及下一轮优先级已确认。循环回到 01 业务挖掘，开始新一轮机会——<b>下一轮的实验室访谈从这里重新开始</b>。</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="note">
+      📌 训练提示：任务标为「已完成」需要同时填写<b>结论、证据位置和责任人</b>；更改已提交的证据或结论，会使本阶段及后续已通过的关卡变为「待复核」。<br>
+      虚拟实验室＝业务挖掘实验室（3D 业务现场），仅服务阶段 01–02；实验室记录按案例、Cookie 和练习 ID 保存，返回全流程会定位到同一次练习。依据 FDE Simulation Training Center 项目资料整理。
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
